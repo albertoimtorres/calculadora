@@ -1,7 +1,7 @@
-import { operation } from "../utils";
+import { format, operation } from "../utils";
 
 const initState = {
-    value: ""
+    value: "0"
 }
 
 export const display = (state = initState, action) => {
@@ -12,7 +12,7 @@ export const display = (state = initState, action) => {
         case 'DISPLAY':
             return {
                 ...state,
-                value: `${state?.value}${value}`
+                value: format(state, value)
             }
         case 'C':
             return {
