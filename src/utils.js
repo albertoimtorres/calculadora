@@ -1,9 +1,11 @@
 import _ from 'lodash';
 import { evaluate } from 'mathjs';
 
-const regex = /[^-^+^*^/]+/g;
+const regex = /[^-^+^*^/^√]+/g;
 
-export const operators = ['+', '-', '*', '/', '='];
+const regexSqrt =  /(√.*?)[0-9.]*/gm;
+
+export const operators = ['+', '-', '*', '/', '√', '='];
 
 /**
  * @description
@@ -78,6 +80,39 @@ export const format = (state, value) => `${state?.value === '0' ? value :
 
 /**
  * @description
+ * Realiza el cálculo de la raiz cuadrada. Busca dentro de la cadena
+ * la subcadena √ con los valores asigandos a esta y reemplaza los
+ * valores con la función sqrt en cadena con sus correspondientes
+ * valores.
+ *
+ * Ejemplo:
+ *
+ * var str = '12 + √5 - 20 + 8';
+ *
+ * Busca la subcadena √5 y reemplza esta por sqrt(5)
+ *
+ * Entonces la cadena queda de la siguiente manera:
+ *
+ * '12 + sqrt(5) - 20 + 8';
+ *
+ * No importa que lleguen valores decimales o enteros muy grandes
+ * estos seran reemplazados.
+ *
+ * Esto se realiza para que cuando pase por la función evaluate de mathjs
+ * se pueda realizar el cálculo.
+ *
+ * @param {String} str operaciones matemáticas.
+ *
+ * @returns {String} el cambio de caracter √.
+*/
+export const sqrt = str => {
+    let replace = _.chain(str)
+    .words(regexSqrt).head().replace('√', 'sqrt(').value().concat(')');
+    return `${_.replace(str, regexSqrt, replace)}`;
+}
+
+/**
+ * @description
  * Recibe una operación matemática en cadena y la evalua.
  * 
  * Ejemplo:
@@ -94,7 +129,7 @@ export const format = (state, value) => `${state?.value === '0' ? value :
  * 
  * @return {String} el resultado de la operación.
 */
-export const operation = fn => `${evaluate(fn)}`;
+export const operation = fn => `${pipe(sqrt, evaluate)(fn)}`;
 
 /**
  * @description
