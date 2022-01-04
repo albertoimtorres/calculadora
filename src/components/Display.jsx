@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { words } from '../utils';
 
 const Display = ({value}) => (
   <div className="display">
@@ -13,11 +14,11 @@ Display.propTypes = {
 }
 
 Display.defaultProps = {
-  value: 0
+  value: "0"
 }
 
 const mapStateToProps = state => ({
-  value: state.display.value
+  value: words(state.display.value)
 })
 
 const mapDispatchToProps = dispatch => {
