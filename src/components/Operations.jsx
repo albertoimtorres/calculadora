@@ -26,11 +26,9 @@ const Operations = ({value, onClickOperation, onClickEqual}) => {
   );
 }
 
-const mapStateToProps = state => {
-  return {
-    value: state.display.value
-  }
-}
+const mapStateToProps = state => ({
+  value: state.display.value
+})
 
 const mapDispatchToProps = dispatch => ({
   onClickOperation: value => {

@@ -11,11 +11,9 @@ const SpecialFunctions = ({value, onClickClear, onClickClearError}) => {
   );
 }
 
-const mapStateToProps = state => {
-  return {
-    value: state.display.value
-  }
-}
+const mapStateToProps = state => ({
+  value: state.display.value
+})
 
 const mapDispatchToProps = dispatch => ({
   onClickClear: text => {
