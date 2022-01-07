@@ -84,14 +84,32 @@ export const pipe = (...fns) => (x) => fns.reduce((v, f) => f(v), x);
 export const format = (state, value) => `${state?.value === '0' ? value :
     state?.value + value}`
 
+/**
+ * @description
+ * Recive la función matemática y la busca dentro del diccionario como llave.
+ * Una vez obtenida la reemplaza y lleva la función de mathjs.
+ *
+ * Ejemplo:
+ *
+ * var str = '12 + √5 - 20 + 8';
+ *
+ * fn = √ || x² ... etc.
+ *
+ * dict[fn] esto puede ser igual a √ = sqrt, x² = square, etc.
+ *
+ * entonces se retorna la función matemática que correponda.
+ *
+ * '12 + sqrt(5) - 20 + 8';
+ *
+ * @param {String} fn funciones matemáticas de la calculadora.
+ *
+ * @returns {String} funciones matemáticas de mathjs.
+*/
 const formatFunction = (fn) => `${dict[fn.match(regexMathFunc)[0]]}(${_.replace(fn, fn.match(regexMathFunc)[0], '')})`;
 
 /**
  * @description
- * Realiza el cálculo de la raiz cuadrada. Busca dentro de la cadena
- * la subcadena √ con los valores asigandos a esta y reemplaza los
- * valores con la función sqrt en cadena con sus correspondientes
- * valores.
+ * Realiza el cálculo de las operaciones matemáticas.
  *
  * Ejemplo:
  *
