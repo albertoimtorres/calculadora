@@ -1,11 +1,17 @@
-import _ from 'lodash';
+import _, { find, findLast } from 'lodash';
 import { evaluate } from 'mathjs';
 
-const regex = /[^-^+^*^/^√]+/g;
+const regexMathFunc = /(√|x²)/gi; // /(√|x²)(?![0-9.]).*$/gi; // /(√|x²).*$/g;
+const regex = /[^-^+^*^/^√^x²]+/g;
+const regexReverse = /^[0-9.]*(x²|√)$/gi;
+const regexFunc =  /(√|x².*?)[0-9.]*|[0-9.]*(√|x².*?)/gi; // /(√.*?)[0-9.]*|[0-9.]*(√.*?)|(x².*?)[0-9.]*|[0-9.]*(x².*?)/gm;
 
-const regexSqrt =  /(√.*?)[0-9.]*/gm;
+const dict = {
+    '√': 'sqrt',
+    'x²': 'square'
+};
 
-export const operators = ['+', '-', '*', '/', '√', '='];
+export const operators = ['+', '-', '*', '/', '±', '.', '√', 'x²', '='];
 
 /**
  * @description
@@ -78,6 +84,8 @@ export const pipe = (...fns) => (x) => fns.reduce((v, f) => f(v), x);
 export const format = (state, value) => `${state?.value === '0' ? value :
     state?.value + value}`
 
+const formatFunction = (fn) => `${dict[fn.match(regexMathFunc)[0]]}(${_.replace(fn, fn.match(regexMathFunc)[0], '')})`;
+
 /**
  * @description
  * Realiza el cálculo de la raiz cuadrada. Busca dentro de la cadena
@@ -105,10 +113,17 @@ export const format = (state, value) => `${state?.value === '0' ? value :
  *
  * @returns {String} el cambio de caracter √.
 */
-export const sqrt = str => {
-    let replace = _.chain(str)
-    .words(regexSqrt).head().replace('√', 'sqrt(').value().concat(')');
-    return `${_.replace(str, regexSqrt, replace)}`;
+export const funcSpecials = operation => {
+
+    const fns = _.words(operation, regexFunc);
+
+    fns.map(fn =>
+        regexReverse.exec(fn) !== null ?
+        operation = _.replace(operation, fn, formatFunction(fn)) :
+        operation = _.replace(operation, fn, formatFunction(fn))
+    );
+
+    return operation;
 }
 
 /**
@@ -129,7 +144,7 @@ export const sqrt = str => {
  * 
  * @return {String} el resultado de la operación.
 */
-export const operation = fn => `${pipe(sqrt, evaluate)(fn)}`;
+export const operation = fn => `${pipe(funcSpecials, evaluate)(fn)}`;
 
 /**
  * @description

@@ -6,7 +6,7 @@ const SpecialFunctions = ({value, onClickClear, onClickClearError}) => {
   return (
     <div className="special-functions">
       <Button type="button-long-text" text={"C"} clickHandler={text => onClickClear(value)} />
-      <Button text={"CE"} clickHandler={onClickClearError} />
+      <Button type="button-long-text" text={"CE"} clickHandler={onClickClearError} />
     </div>
   );
 }
